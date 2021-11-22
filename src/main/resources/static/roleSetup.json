@@ -1,0 +1,60 @@
+{
+  "roles": [
+    {
+      "roleName": "admin",
+      "createdBy": "system",
+      "defaultRoleModules": [
+        {
+          "viewPermission": true,
+          "modifyPermission": false,
+          "deletePermission": false,
+          "taskModule": {
+            "moduleName": "login",
+            "url": "user/login",
+            "taskRef": "user",
+            "parentTaskModule": ""
+          }
+        },
+        {
+          "viewPermission": true,
+          "modifyPermission": false,
+          "deletePermission": false,
+          "taskModule": {
+            "moduleName": "registration",
+            "url": "user/registration",
+            "taskRef": "user",
+            "parentTaskModule": ""
+          }
+        }
+      ]
+    },
+    {
+      "roleName": "user",
+      "createdBy": "system",
+      "defaultRoleModules": [
+        {
+          "viewPermission": true,
+          "modifyPermission": false,
+          "deletePermission": false,
+          "taskModule": {
+            "moduleName": "login",
+            "url": "user/login",
+            "taskRef": "user",
+            "parentTaskModule": ""
+          }
+        },
+        {
+          "viewPermission": true,
+          "modifyPermission": false,
+          "deletePermission": false,
+          "taskModule": {
+            "moduleName": "registration",
+            "url": "user/registration",
+            "taskRef": "user",
+            "parentTaskModule": ""
+          }
+        }
+      ]
+    }
+  ]
+}
