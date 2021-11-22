@@ -1,5 +1,7 @@
 package com.example.blogproject.config.initializer;
 
+import com.example.blogproject.config.objectMapper.GenericMapper;
+import com.example.blogproject.config.objectMapper.JsonToObjectMapper;
 import com.example.blogproject.model.ModulePermission;
 import com.example.blogproject.model.Role;
 import com.example.blogproject.model.TaskModule;
@@ -38,36 +40,33 @@ public class RoleInitializer extends CommonInitializer implements Initializer{
     public void insertToDb(Object object){
         JSONObject jo = (JSONObject) object;
         var roles = (JSONArray) jo.get("roles");
-        for(int i = 0; i < roles.size(); i++){
-            var roleJsonObj = (JSONObject) roles.get(i);
-            var defaultRoleModulesJsonObject = (JSONArray) roleJsonObj.get("defaultRoleModules");
-            List<ModulePermission> modulePermissionList = new LinkedList<ModulePermission>();
-            for(int j = 0; j < defaultRoleModulesJsonObject.size(); j++){
-                var permissionJsonObject = (JSONObject) defaultRoleModulesJsonObject.get(i);
-                var taskModuleJsonObject = (JSONObject) permissionJsonObject.get("taskModule");
-                var modulePermission = new ModulePermission(){{
-                    setViewPermission((boolean) permissionJsonObject.get("viewPermission"));
-                    setModifyPermission((boolean) permissionJsonObject.get("modifyPermission"));
-                    setViewPermission((boolean) permissionJsonObject.get("deletePermission"));
-                    setTaskModule(new TaskModule(){{
-                        setModuleName((String)taskModuleJsonObject.get("moduleName"));
-                        setUrl((String)taskModuleJsonObject.get("url"));
-                        setTaskRef((String)taskModuleJsonObject.get("taskRef"));
-                        setParentTaskModule((String) taskModuleJsonObject.get("parentTaskModule"));
-                    }});
-                }};
-                modulePermissionList.add(modulePermission);
-            }
-            var role = new Role(){
-                {
-                    setRoleName((String) roleJsonObj.get("roleName"));
-                    setDefaultRoleModules(modulePermissionList);
-                }
-            };
-            System.out.println(role);
+        try{
+            for(int i = 0; i < roles.size(); i++){
+                var roleJsonObj = (JSONObject) roles.get(i);
+                var defaultRoleModulesJsonObject = (JSONArray) roleJsonObj.get("defaultRoleModules");
+                List<ModulePermission> modulePermissionList = new LinkedList<ModulePermission>();
 
+                for(int j = 0; j < defaultRoleModulesJsonObject.size(); j++){
+                    var permissionJsonObject = (JSONObject) defaultRoleModulesJsonObject.get(i);
+                    var taskModuleJsonObject = permissionJsonObject.get("taskModule");
+
+                    var modulePermission =
+                            (ModulePermission) new JsonToObjectMapper().getConvertedResult((JSONObject) taskModuleJsonObject, new ModulePermission());
+                    modulePermission.setTaskModule((TaskModule) new JsonToObjectMapper().getConvertedResult((JSONObject) taskModuleJsonObject, new TaskModule()));
+                    modulePermissionList.add(modulePermission);
+
+                }
+                var role = (Role) new JsonToObjectMapper().getConvertedResult((JSONObject) roleJsonObj, new Role());
+                //role.setDefaultRoleModules(modulePermissionList);
+
+                System.out.println(role);
+            }
+        }catch(
+                NoSuchFieldException e){
+            e.printStackTrace();
+        }catch(IllegalAccessException e){
+            e.printStackTrace();
         }
 
-        System.out.println(roles);
     }
 }
